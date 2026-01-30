@@ -198,15 +198,19 @@ jobs:
             echo "FORMAT_MKBOOTING=$(echo `tools/unpack_bootimg.py --boot_img=boot-source.img --format mkbootimg`)" >> $GITHUB_ENV
             echo "HAVE_SOURCE_BOOT_IMAGE=true" >> $GITHUB_ENV
         fi
-
+        
     - name: Setup KernelSU Next
       if: env.ENABLE_KERNELSU == 'true'
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-        # Rehberdeki linki en güncel haliyle deniyoruz
-        curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/main/kernel/setup.sh" | bash -s main
-        # Versiyon bilgisini çekelim
-        KSU_VERSION=$(git rev-list --count HEAD KernelSU 2>/dev/null || echo "0")
+        # Next'i bir klasöre indiriyoruz
+        git clone https://github.com/rifsxd/KernelSU-Next KernelSU
+        # İçindeki kernel klasörünü senin koda entegre ediyoruz
+        cd KernelSU
+        cp -r kernel/* ../kernel/
+        cd ..
+        # Versiyonu otomatik hesapla
+        KSU_VERSION=$(cd KernelSU && expr $(git rev-list --count HEAD) + 10200)
         echo "UPLOADNAME=-KernelSU_Next_$KSU_VERSION" >> $GITHUB_ENV
 
     - name: Setup Configuration for Kernel
