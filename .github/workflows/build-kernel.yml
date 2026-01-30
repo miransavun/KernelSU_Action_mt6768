@@ -203,11 +203,10 @@ jobs:
       if: env.ENABLE_KERNELSU == 'true'
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-        git clone https://github.com/rifsxd/KernelSU-Next KernelSU
-        cd KernelSU
-        curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/main/kernel/setup.sh" | bash -
-        cd ..
-        KSU_VERSION=$(cd KernelSU && expr $(/usr/bin/git rev-list --count HEAD) + 10200)
+        # Rehberdeki linki en güncel haliyle deniyoruz
+        curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/main/kernel/setup.sh" | bash -s main
+        # Versiyon bilgisini çekelim
+        KSU_VERSION=$(git rev-list --count HEAD KernelSU 2>/dev/null || echo "0")
         echo "UPLOADNAME=-KernelSU_Next_$KSU_VERSION" >> $GITHUB_ENV
 
     - name: Setup Configuration for Kernel
